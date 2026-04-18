@@ -10,9 +10,7 @@
     <ItemGroup>
       <Folder Include="Exceptions\" />
       <Folder Include="Factory\" />
-      <Folder Include="Repository\" />
       <Folder Include="Service\" />
-      <Folder Include="Storage\" />
     </ItemGroup>
 
     <ItemGroup>

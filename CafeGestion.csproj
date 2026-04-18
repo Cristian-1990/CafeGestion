@@ -13,7 +13,6 @@
       <Folder Include="Repository\" />
       <Folder Include="Service\" />
       <Folder Include="Storage\" />
-      <Folder Include="Validators\" />
     </ItemGroup>
 
     <ItemGroup>

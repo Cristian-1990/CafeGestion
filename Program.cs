@@ -1,3 +1,94 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.Text.Json;
+using CafeGestion.Models;
+using Serilog;
+//Configuracion del Looger
+var logger = new LoggerConfiguration()
+ .MinimumLevel.Debug()
+ .WriteTo.Console()
+ .WriteTo.File("logs/cafeGestion.log")
+ .CreateLogger();
+Log.Logger = logger;
+Log.Information("Iniciando Gestion de cafes...");
+Main();
+return;
 
-Console.WriteLine("Hello, World!");
+
+void Main()
+{
+ var cafeUno = new Cafe()
+ {
+  Cantidad = 12,
+  Disponible = true,
+  Entrada = DateTime.Now,
+  Id = 01,
+  Nombre = "Nestor Lasso",
+  Puntuacion = 8.75,
+ };
+ Log.Debug($"Cafe Creado Correctamente:{cafeUno.Id}");
+ var cafeDos = new Cafe()
+ {
+  Cantidad =4,
+  Disponible = true,
+  Entrada = DateTime.Now,
+  Id = 02,
+  Nombre = "Cifuentes",
+  Puntuacion = 9,
+ };
+ Log.Debug($"Cafe creado correctamente: {cafeDos.Id}");
+  var iguales =cafeUno.Equals(cafeDos);
+  logger.Debug($"Los cafes  son iguales en cuanto al valor de su campo ID : {iguales}");
+ var hasC = cafeUno.GetHashCode();
+ logger.Debug($"HasCode del primer café : {hasC}");
+ var hasCDos = cafeDos.GetHashCode();
+ logger.Debug($"HasCode del segundo café: {hasCDos}");
+ Log.Debug($"Son identicos?");
+ if (hasC == hasCDos)
+ {
+  logger.Debug($"Son el mismo objeto");
+ }
+ else
+ {
+  logger.Debug("No son identicos");
+ }
+
+ var especificaciones = cafeUno.ToString();
+logger.Debug($"ESPECIFICACIONES: {especificaciones}");
+
+
+// DTO objeto a JSON
+logger.Debug($"Serializacion de objeto a JSON");
+
+//Opción para que el resultado en pantalla sea más legible
+var opciones = new JsonSerializerOptions {WriteIndented = true};
+var json = JsonSerializer.Serialize(cafeUno, opciones);
+logger.Debug(json);
+
+}
+
+/*5.4.4. Serializar Listas
+var alumnos = new List<Alumno>
+{
+    new(1, "Ana García", 20, 8.5),
+    new(2, "Juan Pérez", 22, 7.0),
+    new(3, "María López", 21, 9.2)
+};
+
+var opciones = new JsonSerializerOptions { WriteIndented = true };
+string json = JsonSerializer.Serialize(alumnos, opciones);
+
+File.WriteAllText("alumnos.json", json);
+Console.WriteLine(json);
+
+*5.4.5. Serializar Basico
+using System.Text.Json;
+
+public record Alumno(int Id, string Nombre, int Edad, double Nota);
+
+var alumno = new Alumno(1, "Ana García", 20, 8.5);
+
+// Serializar a JSON string
+string json = JsonSerializer.Serialize(alumno);
+Console.WriteLine(json);
+
+// Salida: {"Id":1,"Nombre":"Ana García","Edad":20,"Nota":8.5}
+*/

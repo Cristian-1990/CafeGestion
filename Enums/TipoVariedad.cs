@@ -1,7 +1,8 @@
 ﻿namespace CafeGestion.Enums;
 
-public enum Variedad
+public enum TipoVariedad
 {
+    Desconocido = 0,
     Bourbon = 1,
     Caturra = 2,
     Catuai = 3,

@@ -1,8 +1,8 @@
 ﻿namespace CafeGestion.Enums;
 
-public enum Origen
+public enum TipoOrigen
 {
-    
+    Desconocido = 0,
     Brasil = 1,
     Colombia = 2,
     Indonesia = 3,

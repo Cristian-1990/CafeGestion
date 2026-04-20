@@ -1,4 +1,6 @@
-﻿namespace CafeGestion.Repository;
+﻿using CafeGestion.Models;
+
+namespace CafeGestion.Repository.Common;
 /// <summary>
 /// Implementa unCrud que recibirá dos parámetros genéricos, con restricción en TEntity, debe ser del tipo class y NO primitivo
 /// </summary>
@@ -11,18 +13,20 @@ public interface ICrudRepository <TKey, TEntity> where TEntity : class
     /// </summary>
     /// <returns>Listado IEnumerable </returns>
     IEnumerable<TEntity> GetAll();
+
     /// <summary>
     /// Función que busca por Id y devuelve un TEntity
     /// </summary>
     /// <param name="id">Parámetro por el que se hará la búsqueda</param>
     /// <returns>TEntity encontrado</returns>
-    TEntity GetById(TKey id);
+    Producto? GetById(TKey id);
+
     /// <summary>
     /// Crea un nuevo objeto genérico TEntity
     /// </summary>
     /// <param name="entity">Parámetro de entrada Genérico</param>
     /// <returns>Nuevo TEntity </returns>
-    TEntity Create(TEntity entity);
+    Producto? Create(TEntity entity);
     /// <summary>
     /// Busca por Id una entidad T y la actualiza
     /// </summary>

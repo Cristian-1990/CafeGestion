@@ -7,7 +7,7 @@ namespace CafeGestion.Storage.StorageJson;
 /// <summary>
 /// Clase que implementa dos metodos para Guardar y Cargar (Escribir y leer)
 /// </summary>
-public class StorageJson : IStorage<Cafe>
+public class StorageJson : IStorageJson
 {/// <summary>
  /// Metodo para guardar una Cafe en una ruta
  /// </summary>

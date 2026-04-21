@@ -1,6 +1,7 @@
 ﻿using CafeGestion.Models;
 using CafeGestion.Repository.Common;
 
+
 namespace CafeGestion.Repository.Productos.Base;
 /// <summary>
 /// Interfaz que implementa la ICrudRepository y añade función para los de tipo Producto
@@ -12,4 +13,7 @@ public interface IProductoRepo : ICrudRepository<int,Producto >
     ///  </summary>
     ///  <returns></returns>
     bool Disponible(int id);
+
+    public bool DeleteAll();
+
 }

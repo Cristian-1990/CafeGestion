@@ -40,5 +40,6 @@ public interface ICrudRepository <TKey, TEntity> where TEntity : class
     /// <param name="id">parámetro de búsqueda</param>
     /// <returns>Entidad borrada o null</returns>
     TEntity? Delete(TKey id);
+    
 
 }

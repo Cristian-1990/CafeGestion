@@ -91,4 +91,13 @@ public class ProductoRepo : IProductoRepo
         {
             return _diccionarioCafe.ContainsKey(id);
         }
+
+    public bool DeleteAll()
+    {
+        _diccionarioCafe.Clear();
+        _contadorId = 0;
+        return true;
+    }
+    
+    
 };

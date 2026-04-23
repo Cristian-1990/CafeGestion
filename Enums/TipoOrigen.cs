@@ -7,5 +7,6 @@ public enum TipoOrigen
     Colombia = 2,
     Indonesia = 3,
     Etiopia = 4,
-    Kenia =5
+    Kenia =5,
+    Guatemala,
 }

@@ -9,7 +9,7 @@ public interface IProductoService
     IEnumerable<Producto> GetAllOrderBy(TipoOrdenamiento orden = TipoOrdenamiento.Id,Predicate<Producto>? filtro = null);
     Producto? GetById(int id);
     Producto Guardar(Producto producto);
-    Producto Actualizar(int id, Producto producto);
+    Producto Actualizar(Producto producto);
     Producto Delete(int id);
    // InformeProducto GenerarInforme();
     int ImportarDatos();

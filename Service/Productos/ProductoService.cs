@@ -11,7 +11,7 @@ namespace CafeGestion.Service.Productos;
 public class ProductoService(
     IProductoRepo repository,
     IStorage<Producto> storage,
-    IValidador<Producto> validadorProducto):IProductoService
+    IValidador<Cafe> validadorProducto):IProductoService
 {
     public int TotalProductos => repository.GetAll().Count();
     public IEnumerable<Producto> GetAll()
@@ -35,9 +35,9 @@ public class ProductoService(
         return nuevoProducto;
     }
 
-    public Producto Actualizar(int id, Producto producto)
+    public Producto Actualizar(Producto producto)
     {
-        var actualizada = repository.Update(id, producto);
+        var actualizada = repository.Create(producto) ?? throw new ProductosException.AlreadyExist(producto.Id);
         return actualizada;
     }
 
@@ -51,6 +51,7 @@ public class ProductoService(
     {
         return new InformeProducto();
     }
+    
 
     public int ImportarDatos()
     {

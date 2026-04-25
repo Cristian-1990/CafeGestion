@@ -2,5 +2,5 @@
 
 public interface IValidador <T>
 {
-    IEnumerable<string> Validar(T cafe);
+    IEnumerable<string> Validar(T producto);
 }

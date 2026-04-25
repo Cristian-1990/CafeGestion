@@ -13,12 +13,13 @@ public class StorageJson : IStorageJson
  /// </summary>
  /// <param name="items">Ienumerable del tipo Cafe</param>
  /// <param name="path">Ruta donde se guarda items del tipo string</param>
-    public void Guardar(IEnumerable<Cafe> items, string path)
+    public void Guardar(IEnumerable<Producto> items, string path)
     {
         try
         {
             using var stream = File.Create(path); //Crea el fichero en la ruta indicada, si existe lo sobreescribe
             var dto = items
+                .OfType<Cafe>()
                 .Select(c => c.ToDto()) //Por cada Cafe llama a CafeDto 
                 .ToList();//Materializa el resultado de select en forma de lista
             JsonSerializer.Serialize(stream, dto); //Convierte la lista CafeDto a JSon
@@ -36,7 +37,7 @@ public class StorageJson : IStorageJson
 /// <returns></returns>
 /// <exception cref="FileNotFoundException"></exception>
 /// <exception cref="Exception"></exception>
-    public IEnumerable<Cafe> Cargar(string path)
+    public IEnumerable<Producto> Cargar(string path)
     {
         if (!Path.Exists(path))//Comprueba si el fichero existe antes de intentar leerlo
         {

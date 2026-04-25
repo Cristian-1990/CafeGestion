@@ -2,9 +2,10 @@
 
 public enum MenuOpciones
 {
-    AñadirCafe = 1,
-    BorrarCafe = 2,
+    ListarCafes = 1,
+    AñadirCafe = 2,
     BuscarCafe = 3,
     ModificarCafe = 4,
-    ListarCafes = 5
+    BorrarCafe = 5,
+    Salir = 0
 }

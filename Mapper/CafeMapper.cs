@@ -4,8 +4,8 @@ using CafeGestion.Enums;
 namespace CafeGestion.Mapper;
 /// <summary>
 /// Clase statica que contiene dos metodos:
-/// 1. Recibe Dto y devuelve Café
-/// 2.Recibe Café y devuelve Dto
+/// 1. Recibe Dto y devuelve Café    --> Origen = Enum.Parse<TipoOrigen>(dto.Origen)
+/// 2.Recibe Café y devuelve Dto     --> Origen = cafe.Origen.ToString
 /// </summary>
 public static class CafeMapper
 {
@@ -58,7 +58,3 @@ public static class CafeMapper
          );
     }
 }
-/*
- * De Café a CafeDto --> Origen = cafe.Origen.ToString
- * De CafeDto a Cafe --> Origen = Enum.Parse<TipoOrigen>(dto.Origen)
- */

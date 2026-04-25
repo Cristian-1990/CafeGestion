@@ -1,7 +1,9 @@
 ﻿using CafeGestion.Enums;
 
 namespace CafeGestion.Models;
-
+/// <summary>
+/// Clase que hereda de Producto 
+/// </summary>
 public sealed record Cafe:Producto
 {
     public TipoOrigen Origen { get; init; }

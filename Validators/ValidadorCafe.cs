@@ -7,12 +7,13 @@ namespace CafeGestion.Validators;
 public class ValidadorCafe: IValidador<Cafe>
 {
     /// <summary>
-    /// Recibe un cafe para validar, almacena lso posibles errores en una lista string
+    /// Recibe un cafe para validar, almacena los posibles errores en una lista string
     /// </summary>
-    /// <param name="cafe">entidad del tipo cafe que validaremos</param>
-    /// <returns>IEnumerabla del tipo String(lista de errores)</returns>
+    /// <param name="cafe">Entidad del tipo cafe que validaremos</param>
+    /// <returns>IEnumerable del tipo String(lista de errores)</returns>
     public IEnumerable<string> Validar(Cafe cafe)
     {
+        //Lista de posibles errores que pueden darse instanciando un café
         var errores = new List<string>();
         
         if (cafe.Cantidad < 0)
@@ -29,7 +30,7 @@ public class ValidadorCafe: IValidador<Cafe>
         }
         if (!Enum.IsDefined(typeof(TipoProceso), cafe.Proceso))
         {
-            errores.Add("El campo Proces no es válido.");
+            errores.Add("El campo Proceso no es válido.");
         }
         if (!Enum.IsDefined(typeof(TipoVariedad), cafe.Variedad))
         {

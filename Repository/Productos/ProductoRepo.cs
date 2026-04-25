@@ -47,18 +47,24 @@ public class ProductoRepo : IProductoRepo
         _diccionarioCafe[nuevoCafe.Id] = nuevoCafe;
         return nuevoCafe;
     }
-
-    public Producto? Update(int id, Producto entity)
+/// <summary>
+/// Busca el objeto que queremos actualizar
+/// </summary>
+/// <param name="id">Clave por la que buscamos el objeto</param>
+/// <param name="entity">Producto que arroja la búsqueda</param>
+/// <returns>Devuelve el producto actualizado o null si no existe</returns>
+    public Producto Update(int id, Producto entity)
     {
         if (!_diccionarioCafe.TryGetValue(id, out var actual)) return null;
-
         var productoActualizado = entity with
         {
+            Entrada = actual.Entrada,
             Disponible = true
         };
         _diccionarioCafe[id] = productoActualizado;
         return productoActualizado;
     }
+
     /// <summary>
     /// Busca un producto y lo borra
     /// </summary>
@@ -76,7 +82,7 @@ public class ProductoRepo : IProductoRepo
     /// <summary>
     /// Comprueba si un Producto existe buscando su id
     /// </summary>
-    /// <param name="id">id del Producto comprobar</param>
+    /// <param name="id">Id del Producto comprobar</param>
     /// <returns>bool</returns>
     public bool Existe(int id)
         {
@@ -85,19 +91,18 @@ public class ProductoRepo : IProductoRepo
     /// <summary>
     /// Comprueba si el producto está disponible
     /// </summary>
-    /// <param name="id">id del Producto comprobar</param>
+    /// <param name="id">Id del Producto comprobar</param>
     /// <returns>bool</returns>
-    public bool Disponible(int id)
-        {
-            return _diccionarioCafe.ContainsKey(id);
-        }
-
+    public bool Disponible(int id) => 
+        _diccionarioCafe.TryGetValue(id, out var cafe) && cafe.Disponible;
+    /// <summary>
+    /// Borra todos los datos.
+    /// </summary>
+    /// <returns>bool, confirma que se ha borrado con exito</returns>
     public bool DeleteAll()
     {
         _diccionarioCafe.Clear();
         _contadorId = 0;
         return true;
     }
-    
-    
 };

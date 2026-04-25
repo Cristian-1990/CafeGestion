@@ -7,7 +7,12 @@ using CafeGestion.Storage.Common;
 using CafeGestion.Validators;
 
 namespace CafeGestion.Service.Productos;
-
+/// <summary>
+/// Intermediario entre lo que quiere hacer el program y las capas que realizan esas funciones
+/// </summary>
+/// <param name="repository"></param>
+/// <param name="storage"></param>
+/// <param name="validadorProducto"></param>
 public class ProductoService(
     IProductoRepo repository,
     IStorage<Producto> storage,

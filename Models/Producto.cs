@@ -1,5 +1,7 @@
 ﻿namespace CafeGestion.Models;
-
+/// <summary>
+/// Clase base producto 
+/// </summary>
 public abstract record Producto
 {
     public int Id { get; init; }

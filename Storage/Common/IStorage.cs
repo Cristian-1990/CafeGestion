@@ -1,11 +1,15 @@
 ﻿namespace CafeGestion.Storage.Common;
 
+/// <summary>
+/// interfaz que implementa dos metodos de ESCRITURA  y LECTURA
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public interface IStorage<T>
 {
     /// <summary>
     ///Recibe y Guarda un IEnumerable en la ruta que define el string.
     /// </summary>
-    /// <param name="item">Ienumerable a Guardar</param>
+    /// <param name="item">IEnumerable a Guardar</param>
     /// <param name="path">Ruta donde se guarda el IEnumerable</param>
     public void Guardar(IEnumerable<T> item, string path);
     /// <summary>

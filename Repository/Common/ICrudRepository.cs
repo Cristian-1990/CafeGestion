@@ -2,7 +2,7 @@
 
 namespace CafeGestion.Repository.Common;
 /// <summary>
-/// Implementa unCrud que recibirá dos parámetros genéricos, con restricción en TEntity, debe ser del tipo class y NO primitivo
+/// Implementa un CRUD que recibirá dos parámetros genéricos, con restricción en TEntity, debe ser del tipo class y NO primitivo
 /// </summary>
 /// <typeparam name="TKey">Primer parámetro del tipo T</typeparam>
 /// <typeparam name="TEntity">Segundo parámetro del tipo T con restricción de class</typeparam>
@@ -19,14 +19,14 @@ public interface ICrudRepository <TKey, TEntity> where TEntity : class
     /// </summary>
     /// <param name="id">Parámetro por el que se hará la búsqueda</param>
     /// <returns>TEntity encontrado</returns>
-    Producto? GetById(TKey id);
+    TEntity GetById(TKey id);
 
     /// <summary>
     /// Crea un nuevo objeto genérico TEntity
     /// </summary>
     /// <param name="entity">Parámetro de entrada Genérico</param>
     /// <returns>Nuevo TEntity </returns>
-    Producto? Create(TEntity entity);
+    TEntity? Create(TEntity entity);
     /// <summary>
     /// Busca por Id una entidad T y la actualiza
     /// </summary>

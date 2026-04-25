@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using CafeGestion;
@@ -208,7 +209,7 @@ void BuscarPorId(IProductoService service)
 
 void ActualizarCafe(IProductoService service)
 {
- AnsiConsole.Markup($"[Orange3]Introduce el ID del producto que deseas actualizar[/]\n");
+ AnsiConsole.Markup($"[Orange3]Primero buscaremos el café que quieres modificar para confirmar si ya existe...[/]\n");
  BuscarPorId(service);
  AñadirNuevo(service);
 }

@@ -1,8 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 namespace CafeGestion.Dto;
 /// <summary>
-/// Representa los atributos de un objetoo a un formato más simple de entender para un JSON
+/// Representa los atributos de un objeto a un formato más simple de entender para un JSON.
+/// Transforma un objeto en datos legibles en formato json
 /// </summary>
+/// <remarks>Las propiedades (id,nombre,cantidad...) en minusculas para seguir el estandar camelCase de JSON</remarks>>
 public record CafeDto(
     [property:JsonPropertyName("id")] int Id,
     [property:JsonPropertyName("nombre")]string Nombre,

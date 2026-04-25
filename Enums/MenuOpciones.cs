@@ -1,5 +1,7 @@
 ﻿namespace CafeGestion.Enums;
-
+/// <summary>
+/// Opciones del menú del program
+/// </summary>
 public enum MenuOpciones
 {
     ListarCafes = 1,

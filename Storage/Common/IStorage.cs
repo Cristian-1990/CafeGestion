@@ -15,6 +15,7 @@ public interface IStorage<T>
     /// <summary>
     /// Recibe una ruta y devuelve(Carga) el IEnumerable que contiene
     /// </summary>
+    /// <remarks>Introduce una ruta y devuelve lo que contiene en forma de IEnumerable(la lista que necesitamos)</remarks>>
     /// <param name="path">Nombre de la ruta de destino</param>
     /// <returns>IEnumerable</returns>
     public IEnumerable<T> Cargar(string path);

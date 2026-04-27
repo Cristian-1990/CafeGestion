@@ -12,7 +12,7 @@ public interface IProductoRepo : ICrudRepository<int,Producto >
     /// Muestra la disponibilidad de un Café 
     ///  </summary>
     ///  <returns></returns>
-    bool Disponible(int id);
+    bool Existe(int id);
 
     public bool DeleteAll();
 

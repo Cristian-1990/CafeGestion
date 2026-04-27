@@ -1,5 +1,7 @@
 ﻿namespace CafeGestion.Enums;
-
+/// <summary>
+/// Marca el pais del que procede el café.
+/// </summary>
 public enum TipoOrigen
 {
     Desconocido = 0,

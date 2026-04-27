@@ -2,9 +2,15 @@
 using CafeGestion.Models;
 
 namespace CafeGestion.Factory.Productos;
-
+/// <summary>
+/// Se encarga de instanciar los productos(evita el new()...desperdigado por el código)
+/// </summary>
 public static class ProductoFactory
 {
+    /// <summary>
+    /// Devuelva un IEnumerable de una lista de cafés predefinidos a modo de prueba
+    /// </summary>
+    /// <returns>IEnumerabl de cafés</returns>
     public static IEnumerable<Cafe> SeedCafe()
     {
         var listaCafe = new List<Cafe>();

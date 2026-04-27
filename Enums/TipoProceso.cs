@@ -1,5 +1,7 @@
 ﻿namespace CafeGestion.Enums;
-
+/// <summary>
+/// Tipo de proceso de despulpado del café.
+/// </summary>
 public enum TipoProceso
 {
     Desconocido = 0,

@@ -1,5 +1,7 @@
 ﻿namespace CafeGestion.Enums;
-
+/// <summary>
+/// Tipo de variedad de grano de café
+/// </summary>
 public enum TipoVariedad
 {
     Desconocido = 0,

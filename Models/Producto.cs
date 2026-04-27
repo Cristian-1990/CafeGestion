@@ -22,7 +22,7 @@ public abstract record Producto
 /// Compara el valor del atributo Id de dos objetos para saber si tienen el mismo valor
 /// </summary>
 /// <remarks> Crea una funcion nueva en lugar de sobreescribir la existente con "Producto?" en lugar de "Object? para ayudar al compilador"</remarks>>
-/// <param name="other"></param>
+/// <param name="other">Objeto con el que se compara</param>
 /// <returns>Devuelve verdadero si tienen el mismo valor, o false si no lo tienen</returns>
     public virtual bool Equals(Producto? other)
     {

@@ -1,4 +1,3 @@
 <Solution>
   <Project Path="CafeGestion.csproj" />
-  <Project Path="CafeGestion.Tests/CafeGestion.Tests.csproj" />
 </Solution>

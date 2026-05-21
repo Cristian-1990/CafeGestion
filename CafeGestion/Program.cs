@@ -41,7 +41,8 @@ void Main()
  //Se crea un nuevo Repository y un nuevo Storage para inyectarselos al constructor del nuevo Service
  var repository = new ProductoRepo();
  var storage = new StorageJson();
- IProductoService service = new ProductoService(repository, storage, new ValidadorCafe());
+ var validador = new ValidadorCafe();
+ var service = new ProductoService(repository, storage, validador);
 
  // Llama al métod .Seed para crear una lista predefinida con cafés
  ProductoFactory.SeedCafe().ToList().ForEach(c=> service.Guardar(c));
@@ -75,6 +76,13 @@ void Main()
   }
  }while(opcion != MenuOpciones.Salir);
 }
+
+
+
+
+//==================================================================================
+// MENU DEL PROGRAM
+//===============================================================================
 void MostrarMenu(){
  AnsiConsole.Clear();
  AnsiConsole.WriteLine();

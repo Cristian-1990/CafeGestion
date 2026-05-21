@@ -19,7 +19,7 @@ namespace CafeGestion.Service.Productos;
 public class ProductoService(
     IProductoRepo repository,
     IStorage<Producto> storage,
-    IValidador<Cafe> validadorProducto) : IProductoService
+    IValidador<Cafe> validador) : IProductoService
 {
     public int TotalProductos => repository.GetAll().Count(); // total de productos creados
 

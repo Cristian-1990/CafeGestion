@@ -3,8 +3,7 @@
 /// Interfaz genérica del validador
 /// </summary>
 /// <typeparam name="T">Tipo del objeto que queremos validar</typeparam>
-public interface IValidador <T>
-{
+public interface IValidador <T> {
     /// <summary>
     /// Recibe un objeto genérico para devolver una lista string de errores
     /// </summary>

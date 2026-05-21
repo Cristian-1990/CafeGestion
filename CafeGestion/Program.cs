@@ -1,18 +1,12 @@
-﻿using System.Data;
+﻿
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
-using CafeGestion;
 using CafeGestion.Storage.StorageJson;
 using Serilog;
 using static System.Console;
 using Spectre.Console;
-using Serilog.Sinks.SystemConsole.Themes;
-using CafeGestion.Factory.Repository;
 using CafeGestion.Repository.Productos;
-using CafeGestion.Service;
 using CafeGestion.Enums;
-using CafeGestion.Factory;
 using CafeGestion.Factory.Productos;
 using CafeGestion.Models;
 using CafeGestion.Validators;
@@ -22,8 +16,10 @@ using CafeGestion.Service.Productos;
 var logger = new LoggerConfiguration()
  .MinimumLevel.Debug()
  .WriteTo.Console()
- .WriteTo.File("logs/cafeGestion.log")
+ .WriteTo.File("logs/cafeGestion.log",
+  retainedFileTimeLimit: TimeSpan.FromDays(5))
  .CreateLogger();
+
 
 Log.Logger = logger;
 
@@ -106,7 +102,7 @@ void MostrarMenu(){
 //Lista y muestra todos los cafés sidponibles
 void ListarTodo(IProductoService service)
 {
- AnsiConsole.Markup($"[sandybrown]Listado de todos los cafés[/]\n");
+ Clear();
  var listaCafe = service.GetAll().OfType<Cafe>().ToList();
 
  var table = new Table()
@@ -218,7 +214,7 @@ void BuscarPorId(IProductoService service)
 void ActualizarCafe(IProductoService service)
 {
  AnsiConsole.Markup($"[Orange3]Introduce el ID[/]\n");
- 
+
  var id = ReadLine()?.Trim();
  if (id != null)
  {

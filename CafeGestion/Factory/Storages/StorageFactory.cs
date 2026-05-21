@@ -1,7 +1,9 @@
 ﻿using CafeGestion.Models;
-using CafeGestion.Service.Productos;
+using CafeGestion.Config;
 using CafeGestion.Storage.Common;
 using CafeGestion.Storage.StorageJson;
+using CafeGestion.Storage.StorageCsv;
+using CafeGestion.Storage.StorageXml;
 
 namespace CafeGestion.Factory.Storages;
 /// <summary>
@@ -13,5 +15,10 @@ public static class StorageFactory
     /// Crea un nuevo Storage del tipo producto que implementa IStorage
     /// </summary>
     /// <returns>Nuevo storage</returns>
-    public static IStorage<Producto> CreateStorage() => new StorageJson();
+    public static IStorage<Producto> CreateStorage() => Configuracion.TipoStorage switch
+    {
+        "xml" => new StorageXml(),
+        "csv" => new StorageCsv(),
+        _     => new StorageJson() //Por defecto Json
+    };
 }

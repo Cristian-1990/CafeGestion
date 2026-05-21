@@ -1,3 +1,4 @@
+/*
 using System.Text.Json;
 using CafeGestion.Models;
 using Serilog;
@@ -99,4 +100,111 @@ string json = JsonSerializer.Serialize(alumno);
 Console.WriteLine(json);
 
 // Salida: {"Id":1,"Nombre":"Ana García","Edad":20,"Nota":8.5}
+===============================================================================
+using CafeGestion.Enums;
+using CafeGestion.Models;
+using CafeGestion.Validators;
+using FluentAssertions;
+
+namespace CafeGestion.Tests.Validators;
+
+public class ValidadorCafeTest
+{
+    [TestFixture]
+    public class CasosValidos
+    {
+        private ValidadorCafe _validador = null!;
+        private Cafe _cafeValido = null!;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _validador = new ValidadorCafe();
+            _cafeValido = new Cafe
+            {
+                Id = 7, Nombre = "Ococha", Origen = TipoOrigen.Guatemala,
+                Region = "Papua", Variedad = TipoVariedad.Pacamara,
+                Proceso = TipoProceso.Anaerobico, Puntuacion = 8,
+                NotaDeCata = "Frutos secos", Cantidad = 2,
+                Disponible = true, FechaTueste = DateTime.Now,
+            };
+        }
+
+        [Test]
+        public void Validar_CafeValido_SinErrores()
+        {
+            var errores = _validador.Validar(_cafeValido);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafeConCantidadMinima_SinErrors()
+        {
+            var cafe = _cafeValido with { Cantidad = 1 };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafePuntuacionMinima_SinErrores()
+        {
+            var cafe = _cafeValido with { Puntuacion = 7 };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafePuntuacionMaxima_SinErrores()
+        {
+            var cafe = _cafeValido with { Puntuacion = 10 };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafeOrigenValido_SinErrores()
+        {
+            var cafe = _cafeValido with { Origen = TipoOrigen.Brasil };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafeProcesoValido_SinErrores()
+        {
+            var cafe = _cafeValido with { Proceso = TipoProceso.Natural };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Validar_CafeVariedadValida_SinErrores()
+        {
+            var cafe = _cafeValido with { Variedad = TipoVariedad.Bourbon };
+            var errores = _validador.Validar(cafe);
+            errores.Should().BeEmpty();
+        }
+    }
+
+    [TestFixture]
+    public class CasosInvalidos
+    {
+        private ValidadorCafe _validador = null!;
+        private Cafe _cafeValido = null!;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _validador = new ValidadorCafe();
+            _cafeValido = new Cafe
+            {
+                Id = 7, Nombre = "Ococha", Origen = TipoOrigen.Guatemala,
+                Region = "Papua", Variedad = TipoVariedad.Pacamara,
+                Proceso = TipoProceso.Anaerobico, Puntuacion = 8,
+                NotaDeCata = "Frutos secos", Cantidad = 2,
+                Disponible = true, FechaTueste = DateTime.Now,
+            };
+        }
+    }
+}
 */

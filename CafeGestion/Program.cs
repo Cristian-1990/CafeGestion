@@ -154,7 +154,7 @@ void AñadirNuevo(IProductoService service)
 {
  AnsiConsole.Markup($"[Orange3]📦---AÑADIENDO NUEVO CAFE AL INVENTARIO---📦[/]\n");
  AnsiConsole.Markup($"[Orange3]---ID---[/]\n");
- var id = ReadLine();
+ var id = ComprobarId();
  AnsiConsole.Markup($"[Orange3]---NOMBRE---\n[/]");
  var nombre = ReadLine();
  AnsiConsole.Markup($"[Orange3]---CANTIDAD---\n[/]");
@@ -174,7 +174,7 @@ void AñadirNuevo(IProductoService service)
 
  var cafeNuevo = new Cafe()
  {
-  Id = int.Parse(id),
+  Id = id,
   Nombre = nombre,
   Cantidad = cantidad,
   Puntuacion = puntuacion,
@@ -304,6 +304,16 @@ string ValidarEntrada(string prompt, string regex, string error)
 /*
  *--------------VALIDADORES DE ENTRADA DE DATOS DEL PROGRAM------------------------------
  */
+int ComprobarId()
+{
+ while (true)
+ {
+  var input = ReadLine()?.Trim() ?? "";
+  if (int.TryParse(input, out int id) && id >= 0)
+   return id;
+  AnsiConsole.Markup("[Red]El ID debe ser un número positivo[/]\n");
+ }
+}
 int ComprobarCantidad()
  {
   while (true)
@@ -330,16 +340,17 @@ double ComprobarPuntuacion()
 
 TipoOrigen ComprobarOrigen()
 {
- var opcionInt = 0;
+ 
  while (true)
  {
+  var opcionInt = 0;
   foreach (var origenes in Enum.GetValues<TipoOrigen>())
   {
    AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{origenes}[/]\n");
    opcionInt++;
   }
   var input = ReadLine()?.Trim() ?? "";
-  if (int.TryParse(input, out int origen))
+  if (int.TryParse(input, out int origen) && origen >= 0 && origen < Enum.GetValues<TipoOrigen>().Length)
    return (TipoOrigen)origen;
   AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
   AnsiConsole.Markup($"[Red]Introduce un Origen válido de la lista[/]\n");
@@ -349,16 +360,16 @@ TipoOrigen ComprobarOrigen()
 
 TipoVariedad ComprobarVariedad()
 {
- var opcionInt = 0;
  while (true)
  {
+  var opcionInt = 0;
   foreach (var variedades in Enum.GetValues<TipoVariedad>())
   {
    AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{variedades}[/]\n");
    opcionInt++;
   }
   var input = ReadLine()?.Trim() ?? "";
-  if (int.TryParse(input, out int variedad))
+  if (int.TryParse(input, out int variedad) && variedad >= 0 && variedad < Enum.GetValues<TipoVariedad>().Length)
    return (TipoVariedad)variedad;
   AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
   AnsiConsole.Markup($"[Red]Introduce uno de la lista[/]\n");
@@ -368,9 +379,10 @@ TipoVariedad ComprobarVariedad()
 
 TipoProceso ComprobarProceso()
 {
- var opcionInt = 0;
+ 
  while (true)
  {
+  var opcionInt = 0;
   foreach (var procesos in Enum.GetValues<TipoProceso>())
   {
    AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{procesos}[/]\n");
@@ -378,7 +390,7 @@ TipoProceso ComprobarProceso()
   }
 
   var input = ReadLine()?.Trim() ?? "";
-  if (int.TryParse(input, out int proceso))
+  if (int.TryParse(input, out int proceso) && proceso >= 0 && proceso < Enum.GetValues<TipoProceso>().Length)
    return (TipoProceso)proceso;
   AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
   AnsiConsole.Markup($"[Red]Introduce uno de la lista[/]\n");

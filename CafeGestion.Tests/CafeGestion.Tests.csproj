@@ -22,9 +22,6 @@
         <ProjectReference Include="..\CafeGestion\CafeGestion.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Models\"/>
-        <Folder Include="Repository\"/>
-        <Folder Include="Service\"/>
         <Folder Include="Validators\"/>
     </ItemGroup>
 </Project>

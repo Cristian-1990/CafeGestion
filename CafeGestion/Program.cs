@@ -1,6 +1,7 @@
 ﻿
 using System.Text;
 using System.Text.RegularExpressions;
+using CafeGestion.Config;
 using CafeGestion.Storage.StorageJson;
 using Serilog;
 using static System.Console;
@@ -11,6 +12,7 @@ using CafeGestion.Factory.Productos;
 using CafeGestion.Models;
 using CafeGestion.Validators;
 using CafeGestion.Service.Productos;
+using CafeGestion.Storage.StorageReport;
 
 //Configuracion del ooger
 var logger = new LoggerConfiguration()
@@ -50,7 +52,7 @@ void Main()
  
  // Muestra el menú principal con las opciones disponibles
  MenuOpciones opcion;
- const string regexOpcionMenu = @"^[0-5]$";
+ const string regexOpcionMenu = @"^[0-6]$";
  var contadorCafe = service.TotalProductos;
  do
  {
@@ -66,6 +68,7 @@ void Main()
    case MenuOpciones.BuscarCafe: BuscarPorId(service); break;
    case MenuOpciones.ModificarCafe: ActualizarCafe(service); break;
    case MenuOpciones.BorrarCafe: EliminarCafe(service); break;
+   case MenuOpciones.GenerarFicha: GenerarFicha(service); break;
    case MenuOpciones.Salir:   AnsiConsole.Markup($"[sandybrown]Cerrando el sistema...[/]\n"); break;
   }
 
@@ -93,6 +96,7 @@ void MostrarMenu(){
   $"  [sandybrown]{(int)MenuOpciones.BuscarCafe}.[/]  Buscar café por ID 🔍\n" +
   $"  [sandybrown]{(int)MenuOpciones.ModificarCafe}.[/]  Modificar café ✏️\n" +
   $"  [sandybrown]{(int)MenuOpciones.BorrarCafe}.[/]  Borrar café ❌\n" +
+  $"  [sandybrown]{(int)MenuOpciones.GenerarFicha}.[/]  Generar ficha 📋\n" +
   $"  [sandybrown]{(int)MenuOpciones.Salir}.[/]  Salir";
 
  AnsiConsole.Write(new Panel(contenido)
@@ -286,6 +290,29 @@ void EliminarCafe(IProductoService service)
   AnsiConsole.Markup($"[Red]el producto con ID:[/][White]{input}[/][Red] no existe[/]\n");
  }
 }
+void GenerarFicha(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]Introduce el ID del café para generar la ficha[/]\n");
+ var input = ReadLine()?.Trim() ?? "";
+ if (!int.TryParse(input, out int id) || !service.Existe(id))
+ {
+  AnsiConsole.Markup($"[Red]El café con ID: {input} no existe.[/]\n");
+  return;
+ }
+
+ var cafe = service.GetById(id) as Cafe;
+ if (cafe == null) return;
+
+ var report = new StorageReport();
+ report.GuardarHtml(cafe, Configuracion.CafeHtml(id));
+ report.GuardarPdf(cafe, Configuracion.CafePdf(id));
+
+ AnsiConsole.Markup($"[Green3]Ficha generada correctamente:[/]\n");
+ AnsiConsole.Markup($"[sandybrown]HTML:[/] {Configuracion.CafeHtml(id)}\n");
+ AnsiConsole.Markup($"[sandybrown]PDF:[/] {Configuracion.CafePdf(id)}\n");
+}
+
+
 
 //===================================================================================================================
 //             VALIDADORES DE ENTRADA DE DATOS DEL PROGRAM

@@ -10,4 +10,6 @@ public static class Configuracion
     public static string CafesFileXml => Path.Combine(DataFolder, "cafes.xml");
     public static string CafesFileCsv => Path.Combine(DataFolder, "cafes.csv");
     public static string TipoStorage => "json"; //Cambia a csv o xml sin necesidad de compilar
+    public static string CafeHtml(int id) => Path.Combine(DataFolder, $"ficha_cafe_{id}.html");
+    public static string CafePdf(int id) => Path.Combine(DataFolder, $"ficha_cafe_{id}.pdf");
 }

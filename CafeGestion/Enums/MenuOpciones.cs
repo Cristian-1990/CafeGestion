@@ -9,5 +9,6 @@ public enum MenuOpciones
     BuscarCafe = 3,
     ModificarCafe = 4,
     BorrarCafe = 5,
+    GenerarFicha = 6,
     Salir = 0
 }

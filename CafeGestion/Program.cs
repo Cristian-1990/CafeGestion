@@ -1,0 +1,426 @@
+﻿
+using System.Text;
+using System.Text.RegularExpressions;
+using CafeGestion.Config;
+using CafeGestion.Storage.StorageJson;
+using Serilog;
+using static System.Console;
+using Spectre.Console;
+using CafeGestion.Repository.Productos;
+using CafeGestion.Enums;
+using CafeGestion.Factory.Productos;
+using CafeGestion.Models;
+using CafeGestion.Validators;
+using CafeGestion.Service.Productos;
+using CafeGestion.Storage.StorageReport;
+
+//Configuracion del ooger
+var logger = new LoggerConfiguration()
+ .MinimumLevel.Debug()
+ .WriteTo.Console()
+ .WriteTo.File("logs/cafeGestion.log",
+  retainedFileTimeLimit: TimeSpan.FromDays(5))
+ .CreateLogger();
+
+
+Log.Logger = logger;
+
+Title = "Gestión de Cafés";
+OutputEncoding = Encoding.UTF8;
+
+Clear(); //Limpia la consola
+
+Main(); // Llama el método principal del program
+
+Log.CloseAndFlush(); // Asegura el guardado de los logs antes de cerrar la app
+AnsiConsole.Markup("[darkorange dim]Pulsa cualquier tecla para finalizar...[/] \n");
+ReadKey();
+return;
+
+
+void Main()
+{
+ //Se crea un nuevo Repository y un nuevo Storage para inyectarselos al constructor del nuevo Service
+ var repository = new ProductoRepo();
+ var storage = new StorageJson();
+ var validador = new ValidadorCafe();
+ var service = new ProductoService(repository, storage, validador);
+
+ // Llama al métod .Seed para crear una lista predefinida con cafés
+ ProductoFactory.SeedCafe().ToList().ForEach(c=> service.Guardar(c));
+ 
+ 
+ // Muestra el menú principal con las opciones disponibles
+ MenuOpciones opcion;
+ const string regexOpcionMenu = @"^[0-6]$";
+ var contadorCafe = service.TotalProductos;
+ do
+ {
+  MostrarMenu();
+  var opcionStr = ValidarEntrada("Selecciona una opción del menú:",regexOpcionMenu,"La opción no es válida");
+  var opcionVal = int.Parse(opcionStr);
+  opcion = (MenuOpciones)opcionVal;
+  
+  switch (opcion)
+  {
+   case MenuOpciones.ListarCafes: ListarTodo(service); break;
+   case MenuOpciones.AñadirCafe: AñadirNuevo(service); break;
+   case MenuOpciones.BuscarCafe: BuscarPorId(service); break;
+   case MenuOpciones.ModificarCafe: ActualizarCafe(service); break;
+   case MenuOpciones.BorrarCafe: EliminarCafe(service); break;
+   case MenuOpciones.GenerarFicha: GenerarFicha(service); break;
+   case MenuOpciones.Salir:   AnsiConsole.Markup($"[sandybrown]Cerrando el sistema...[/]\n"); break;
+  }
+
+  if (opcion != MenuOpciones.Salir)
+  {
+   AnsiConsole.Markup($"[sandybrown]Presiona cualquier tecla para cerrar.[/]\n");
+   ReadKey();
+  }
+ }while(opcion != MenuOpciones.Salir);
+}
+
+
+
+
+//==================================================================================
+// MENU DEL PROGRAM
+//===============================================================================
+void MostrarMenu(){
+ AnsiConsole.Clear();
+ AnsiConsole.WriteLine();
+
+ var contenido =
+  $"  [sandybrown]{(int)MenuOpciones.ListarCafes}.[/]  Mostrar todos los cafés 📜\n" +
+  $"  [sandybrown]{(int)MenuOpciones.AñadirCafe}.[/]  Añadir un nuevo café 🫘\n" +
+  $"  [sandybrown]{(int)MenuOpciones.BuscarCafe}.[/]  Buscar café por ID 🔍\n" +
+  $"  [sandybrown]{(int)MenuOpciones.ModificarCafe}.[/]  Modificar café ✏️\n" +
+  $"  [sandybrown]{(int)MenuOpciones.BorrarCafe}.[/]  Borrar café ❌\n" +
+  $"  [sandybrown]{(int)MenuOpciones.GenerarFicha}.[/]  Generar ficha 📋\n" +
+  $"  [sandybrown]{(int)MenuOpciones.Salir}.[/]  Salir";
+
+ AnsiConsole.Write(new Panel(contenido)
+  .Header(new PanelHeader("[darkorange dim] ☕  G E S T I Ó N  D E   C A F É ☕  [/]").Centered())
+  .BorderColor(Color.Grey)
+  .RoundedBorder()
+  .Expand());
+ 
+}
+
+// =====================================================================================================================
+// METODOS DEL PROGRAM PARA COMUNICARSE CON SERVICE
+//======================================================================================================================
+
+//Lista y muestra todos los cafés sidponibles
+void ListarTodo(IProductoService service)
+{
+ Clear();
+ var listaCafe = service.GetAll().OfType<Cafe>().ToList();
+
+ var table = new Table()
+  .BorderColor(Color.Grey)
+  .RoundedBorder()
+  .Title("[darkorange dim] ☕  L I S T A D O   D E   C A F É S  ☕ [/]")
+  .Expand()
+  .AddColumn(new TableColumn("[darkorange dim]ID[/]").Centered())
+  .AddColumn(new TableColumn("[darkorange dim]Nombre[/]"))
+  .AddColumn(new TableColumn("[darkorange dim]Origen[/]"))
+  .AddColumn(new TableColumn("[darkorange dim]Región[/]"))
+  .AddColumn(new TableColumn("[darkorange dim]Variedad[/]"))
+  .AddColumn(new TableColumn("[darkorange dim]Proceso[/]"))
+  .AddColumn(new TableColumn("[darkorange dim]Puntuación[/]").Centered())
+  .AddColumn(new TableColumn("[darkorange dim]Cantidad[/]").Centered())
+  .AddColumn(new TableColumn("[darkorange dim]Disponible[/]").Centered())
+  .AddColumn(new TableColumn("[darkorange dim]Entrada[/]").Centered())
+  .AddColumn(new TableColumn("[darkorange dim]Tueste[/]").Centered());
+
+ foreach (var cafe in listaCafe)
+ {
+  table.AddRow(
+   $"[sandybrown]{cafe.Id}[/]",
+   $"[sandybrown]{cafe.Nombre}[/]",
+   $"[sandybrown]{cafe.Origen}[/]",
+   $"[sandybrown]{cafe.Region}[/]",
+   $"[sandybrown]{cafe.Variedad}[/]",
+   $"[sandybrown]{cafe.Proceso}[/]",
+   $"[sandybrown]{cafe.Puntuacion}[/]",
+   $"[sandybrown]{cafe.Cantidad}[/]",
+   cafe.Disponible ? "[green]✓[/]" : "[red]✗[/]",
+   $"[grey]{cafe.Entrada:dd/MM/yyyy}[/]",
+   $"[grey]{cafe.FechaTueste:dd/MM/yyyy}[/]"
+  );
+ }
+ AnsiConsole.Write(table);
+}
+
+//Recoge y muestra la información del nuevo producto que se quiere almacenar 
+void AñadirNuevo(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]📦---AÑADIENDO NUEVO CAFE AL INVENTARIO---📦[/]\n");
+ AnsiConsole.Markup($"[Orange3]---ID---[/]\n");
+ var id = ComprobarId();
+ AnsiConsole.Markup($"[Orange3]---NOMBRE---\n[/]");
+ var nombre = ReadLine();
+ AnsiConsole.Markup($"[Orange3]---CANTIDAD---\n[/]");
+ var cantidad = ComprobarCantidad();
+ AnsiConsole.Markup($"[Orange3]---PUNTUACION---\n[/]");
+ var puntuacion = ComprobarPuntuacion();
+ AnsiConsole.Markup($"[Orange3]---Origen---[/]\n");
+ var origen = ComprobarOrigen();
+ AnsiConsole.Markup($"[Orange3]---VARIEDAD---\n[/]");
+ var variedad = ComprobarVariedad();
+ AnsiConsole.Markup($"[Orange3]---PROCESO---[/]\n");
+ var proceso = ComprobarProceso();
+ AnsiConsole.Markup($"[Orange3]---REGION---[/]\n");
+ var region = ReadLine();
+ AnsiConsole.Markup($"[Orange3]---NOTAS DE CATA---\n[/]");
+ var notasDeCata = ReadLine();
+
+ var cafeNuevo = new Cafe()
+ {
+  Id = id,
+  Nombre = nombre,
+  Cantidad = cantidad,
+  Puntuacion = puntuacion,
+  Origen = origen,
+  Variedad = variedad,
+  Proceso = proceso,
+  Region = region,
+  NotaDeCata = notasDeCata,
+  FechaTueste = DateTime.Now
+
+ };
+ AnsiConsole.Markup($"[sandybrown]¿Confirmas que quieres guardar este café?[/]\n");
+ AnsiConsole.Markup($"[sandybrown]1.[/][White]SI[/]\n");
+ AnsiConsole.Markup($"[sandybrown]2.[/][White]NO[/]\n");
+
+ var mostrarCafeNuevo = cafeNuevo.ToString();
+ AnsiConsole.Markup($"[sandybrown]{mostrarCafeNuevo}[/]\n");
+ var input = ReadLine()?.Trim() ?? "";
+ if (input == "1")
+ {
+  service.Guardar(cafeNuevo);
+ }
+ else
+ {
+  AnsiConsole.Markup($"[Orange3]El café ha sido descartado...[/]");
+ }
+}
+
+//Busca un producto en función del Id introducido por el usuario.
+//Si no cumple la condición, el producto no existe 
+void BuscarPorId(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]Introduce el ID del café que quieres buscar[/]\n");
+ var input = ReadLine()?.Trim() ?? "";
+ if (int.TryParse(input, out int id) && id <= service.TotalProductos && id > 0 )
+ {
+  var cafeId = service.GetById(id);
+  AnsiConsole.Markup($"[Orange3]{cafeId?.ToString()}[/]\n");
+  return;
+ }
+ AnsiConsole.Markup($"[Orange3]El café con ID: {input}, no existe.3[/]\n");
+}
+
+//========REVISAR METODO==============
+void ActualizarCafe(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]Introduce el ID[/]\n");
+
+ var id = ReadLine()?.Trim();
+ if (id != null)
+ {
+  var idValido = int.TryParse(id, out var idParseado);
+  if (service.Existe(idParseado))
+  {
+   AnsiConsole.Markup($"[Orange3]---NOMBRE---\n[/]");
+   var nombre = ReadLine();
+   AnsiConsole.Markup($"[Orange3]---CANTIDAD---\n[/]");
+   var cantidad = ComprobarCantidad();
+   AnsiConsole.Markup($"[Orange3]---PUNTUACION---\n[/]");
+   var puntuacion = ComprobarPuntuacion();
+   AnsiConsole.Markup($"[Orange3]---Origen---[/]\n");
+   var origen = ComprobarOrigen();
+   AnsiConsole.Markup($"[Orange3]---VARIEDAD---\n[/]");
+   var variedad = ComprobarVariedad();
+   AnsiConsole.Markup($"[Orange3]---PROCESO---[/]\n");
+   var proceso = ComprobarProceso();
+   AnsiConsole.Markup($"[Orange3]---REGION---[/]\n");
+   var region = ReadLine();
+   AnsiConsole.Markup($"[Orange3]---NOTAS DE CATA---\n[/]");
+   var notasDeCata = ReadLine();
+
+   var cafeBuscado = service.GetById(idParseado) as Cafe;
+   if (cafeBuscado != null)
+   {
+    var cafeActualizado = cafeBuscado with
+    {
+     Nombre = nombre,
+     Cantidad = cantidad,
+     Puntuacion = puntuacion,
+     Origen = origen,
+     Variedad = variedad,
+     Proceso = proceso,
+     Region = region,
+     NotaDeCata = notasDeCata,
+    };
+    service.Actualizar(idParseado, cafeActualizado);
+    AnsiConsole.Markup($"[Green3]El cafe se ha guardado correctamente[/]\n");
+
+   }
+   ;
+  }
+ }
+}
+
+//Busca un café y si lo encunetra lo elimina
+void EliminarCafe(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]Primero comprobaremos si el producto existe.[/]\n");
+ BuscarPorId(service);
+ AnsiConsole.Markup($"[Orange3]Introduce el ID Que deseas borrar[/]\n");
+ var input = ReadLine()?.Trim() ?? "";
+ if (int.TryParse(input, out int id) && id <= service.TotalProductos)
+ {
+  service.Delete(id);
+  AnsiConsole.Markup($"[Orange3]El producto se ha borrado correctamente[/]\n");
+ }
+ else
+ {
+  AnsiConsole.Markup($"[Red]el producto con ID:[/][White]{input}[/][Red] no existe[/]\n");
+ }
+}
+void GenerarFicha(IProductoService service)
+{
+ AnsiConsole.Markup($"[Orange3]Introduce el ID del café para generar la ficha[/]\n");
+ var input = ReadLine()?.Trim() ?? "";
+ if (!int.TryParse(input, out int id) || !service.Existe(id))
+ {
+  AnsiConsole.Markup($"[Red]El café con ID: {input} no existe.[/]\n");
+  return;
+ }
+
+ var cafe = service.GetById(id) as Cafe;
+ if (cafe == null) return;
+
+ var report = new StorageReport();
+ report.GuardarHtml(cafe, Configuracion.CafeHtml(id));
+ report.GuardarPdf(cafe, Configuracion.CafePdf(id));
+
+ AnsiConsole.Markup($"[Green3]Ficha generada correctamente:[/]\n");
+ AnsiConsole.Markup($"[sandybrown]HTML:[/] {Configuracion.CafeHtml(id)}\n");
+ AnsiConsole.Markup($"[sandybrown]PDF:[/] {Configuracion.CafePdf(id)}\n");
+}
+
+
+
+//===================================================================================================================
+//             VALIDADORES DE ENTRADA DE DATOS DEL PROGRAM
+//===================================================================================================================
+
+string ValidarEntrada(string prompt, string regex, string error)
+{
+ while (true)
+ {
+  AnsiConsole.Markup($"[sandybrown]{prompt}[/]\n");
+  var input = ReadLine()?.Trim() ?? "";
+  if(Regex.IsMatch(input, regex))return input;
+  AnsiConsole.Markup($"[Red]{error}[/]\n");
+ }
+}
+/*
+ *--------------VALIDADORES DE ENTRADA DE DATOS DEL PROGRAM------------------------------
+ */
+int ComprobarId()
+{
+ while (true)
+ {
+  var input = ReadLine()?.Trim() ?? "";
+  if (int.TryParse(input, out int id) && id >= 0)
+   return id;
+  AnsiConsole.Markup("[Red]El ID debe ser un número positivo[/]\n");
+ }
+}
+int ComprobarCantidad()
+ {
+  while (true)
+  {
+   var input = ReadLine()?.Trim() ?? "";
+   if (int.TryParse(input, out int cantidad) && cantidad >= 1)
+    return cantidad;
+   AnsiConsole.Markup($"[Red]Introduce un número válido mayor que 0[/]\n");
+  }
+ }
+
+double ComprobarPuntuacion()
+{
+ while (true)
+ {
+  var input = ReadLine()?.Trim() ?? "";
+  if (double.TryParse(input, out double puntuacion) && puntuacion > 7.99 && puntuacion < 10.00)
+   return puntuacion;
+  AnsiConsole.Markup($"[Red]Introduce un número válido mayor que 7.99 y menor que 10[/]\n");
+ }
+}
+
+
+
+TipoOrigen ComprobarOrigen()
+{
+ 
+ while (true)
+ {
+  var opcionInt = 0;
+  foreach (var origenes in Enum.GetValues<TipoOrigen>())
+  {
+   AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{origenes}[/]\n");
+   opcionInt++;
+  }
+  var input = ReadLine()?.Trim() ?? "";
+  if (int.TryParse(input, out int origen) && origen >= 0 && origen < Enum.GetValues<TipoOrigen>().Length)
+   return (TipoOrigen)origen;
+  AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
+  AnsiConsole.Markup($"[Red]Introduce un Origen válido de la lista[/]\n");
+  
+ }
+}
+
+TipoVariedad ComprobarVariedad()
+{
+ while (true)
+ {
+  var opcionInt = 0;
+  foreach (var variedades in Enum.GetValues<TipoVariedad>())
+  {
+   AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{variedades}[/]\n");
+   opcionInt++;
+  }
+  var input = ReadLine()?.Trim() ?? "";
+  if (int.TryParse(input, out int variedad) && variedad >= 0 && variedad < Enum.GetValues<TipoVariedad>().Length)
+   return (TipoVariedad)variedad;
+  AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
+  AnsiConsole.Markup($"[Red]Introduce uno de la lista[/]\n");
+  
+ }
+}
+
+TipoProceso ComprobarProceso()
+{
+ 
+ while (true)
+ {
+  var opcionInt = 0;
+  foreach (var procesos in Enum.GetValues<TipoProceso>())
+  {
+   AnsiConsole.Markup($"[sandybrown]{opcionInt}. [/][white]{procesos}[/]\n");
+   opcionInt++;
+  }
+
+  var input = ReadLine()?.Trim() ?? "";
+  if (int.TryParse(input, out int proceso) && proceso >= 0 && proceso < Enum.GetValues<TipoProceso>().Length)
+   return (TipoProceso)proceso;
+  AnsiConsole.Markup($"[Red]Origen desconocido[/]\n");
+  AnsiConsole.Markup($"[Red]Introduce uno de la lista[/]\n");
+
+ }
+}

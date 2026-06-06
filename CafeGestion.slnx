@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="CafeGestion.WPF/CafeGestion.WPF.csproj" />
   <Project Path="CafeGestion/CafeGestion.csproj" />
   <Project Path="CafeGestion.Tests/CafeGestion.Tests.csproj" />
 </Solution>

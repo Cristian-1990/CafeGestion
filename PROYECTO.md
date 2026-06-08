@@ -54,6 +54,22 @@ CafeGestion es una aplicación de gestión de cafés de especialidad que permite
 
 ## 5. Diagrama de Casos de Uso
 
+```mermaid
+graph TD
+    Actor((Gestor))
+    Actor --> UC1[Listar cafés]
+    Actor --> UC2[Añadir café]
+    Actor --> UC3[Buscar café por ID]
+    Actor --> UC4[Modificar café]
+    Actor --> UC5[Eliminar café]
+    Actor --> UC6[Generar ficha PDF/HTML]
+    Actor --> UC7[Exportar JSON/XML/CSV]
+    Actor --> UC8[Cambiar motor de storage]
+    UC2 --> V[[ValidadorCafe]]
+    UC4 --> V
+```
+
+---
 Actor: **Gestor**
 
 | Caso de uso              | Descripción                                      |
@@ -70,6 +86,21 @@ Actor: **Gestor**
 ---
 
 ## 6. Diagrama de Arquitectura
+
+```mermaid
+graph TD
+    A[Program / WPF] --> B[ProductoService]
+    B --> C[ValidadorCafe]
+    B --> D[ProductoRepo / ProductoRepoEf]
+    D --> E[StorageFactory]
+    E --> F[StorageJson]
+    E --> G[StorageXml]
+    E --> H[StorageCsv]
+    A --> I[StorageReport]
+    I --> J[ficha.pdf]
+    I --> K[ficha.html]
+    L[Configuracion.cs] -.-> E
+```
 
 ```
 Program (UI/Consola · Spectre.Console)
@@ -111,7 +142,6 @@ CREATE TABLE Cafe (
 ```
 
 ---
-
 ## 8. Diagramas de Secuencia
 
 ### Guardar café
@@ -119,8 +149,25 @@ CREATE TABLE Cafe (
 Program → Service.Guardar(cafe)
     Service → Validator.Validar(cafe) → Ok / ProductosException
     Service → Repository.Create(cafe) → cafe creado
-    Service → Storage.Guardar(items, path) → void
 Service → Program: cafe guardado
+```
+```mermaid
+sequenceDiagram
+    participant P as Program
+    participant S as ProductoService
+    participant V as ValidadorCafe
+    participant R as ProductoRepo
+
+    P->>S: Guardar(cafe)
+    S->>V: Validar(cafe)
+    V-->>S: errores
+    alt errores > 0
+        S-->>P: throws Validation
+    else sin errores
+        S->>R: Create(cafe)
+        R-->>S: cafe creado
+        S-->>P: cafe
+    end
 ```
 
 ### GetAll
@@ -128,6 +175,17 @@ Service → Program: cafe guardado
 Program → Service.GetAll()
     Service → Repository.GetAll() → IEnumerable<Producto>
 Service → Program: lista de cafés
+```
+```mermaid
+sequenceDiagram
+    participant P as Program
+    participant S as ProductoService
+    participant R as ProductoRepo
+
+    P->>S: GetAll()
+    S->>R: GetAll()
+    R-->>S: IEnumerable<Producto>
+    S-->>P: lista de cafés
 ```
 
 ### GetById
@@ -137,13 +195,38 @@ Program → Service.GetById(id)
     Si null → lanza ProductosException.NotFound
 Service → Program: cafe / excepción
 ```
+```mermaid
+sequenceDiagram
+    participant P as Program
+    participant S as ProductoService
+    participant R as ProductoRepo
+
+    P->>S: GetById(id)
+    S->>R: GetById(id)
+    R-->>S: Producto?
+    alt null
+        S-->>P: throws NotFound
+    else encontrado
+        S-->>P: cafe
+    end
+```
 
 ### Delete
 ```
 Program → Service.Delete(id)
     Service → Repository.Delete(id) → cafe borrado
-    Service → Storage.Guardar(items, path) → void
 Service → Program: cafe borrado
+```
+```mermaid
+sequenceDiagram
+    participant P as Program
+    participant S as ProductoService
+    participant R as ProductoRepo
+
+    P->>S: Delete(id)
+    S->>R: Delete(id)
+    R-->>S: cafe con Disponible=false
+    S-->>P: cafe borrado
 ```
 
 ---

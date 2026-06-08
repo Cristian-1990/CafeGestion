@@ -71,12 +71,6 @@ Desde el menú, opción 6 — genera la ficha de un café en:
 - ✅ Arquitectura limpia con interfaces y genéricos
 - ✅ Documentación XML al 95%
 
-## 🚧 Pendiente
-
-- Interfaz gráfica WPF (la capa de presentación está desacoplada del negocio para poder añadirla sin tocar ninguna otra capa)
-- Persistencia en base de datos (EF Core)
-- Documentación UML
-
 ---
 
 ## 🚀 Ejecución
